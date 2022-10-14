@@ -124,7 +124,12 @@ func FetchAllCourses(ctx context.Context, semkez, lang string) (map[string]*vvzs
 			return nil, nil, fmt.Errorf("failed to scrape courses: %s", err.Error())
 		}
 		for _, course := range courseMap {
-			courses[course.ReadableId] = course
+			existing, ok := courses[course.ReadableId]
+			if ok {
+				existing.Segments = append(existing.Segments, course.Segments...)
+			} else {
+				courses[course.ReadableId] = course
+			}
 		}
 	}
 
